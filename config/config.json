@@ -1,0 +1,41 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "deepak123",
+    "database": "j-pani-paicha-db",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "logging": false,
+    "pool": {
+      "max": 5,
+      "min": 0,
+      "acquire": 30000,
+      "idle": 10000
+    }
+  },
+  "test": {
+    "username": "postgres",
+    "password": "your_test_db_password",
+    "database": "j-pani-paicha-test",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "logging": false
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "dialect": "postgres",
+    "ssl": true,
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    },
+    "pool": {
+      "max": 10,
+      "min": 2,
+      "acquire": 60000,
+      "idle": 30000
+    }
+  }
+}
