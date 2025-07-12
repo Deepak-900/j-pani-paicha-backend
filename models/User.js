@@ -90,6 +90,10 @@ module.exports = (sequelize) => {
                 type: DataTypes.DATE,
                 allowNull: true
             },
+            lastTokenRefresh: {
+                type: DataTypes.DATE,
+                allowNull: true
+            },
             shippingAddress: {
                 type: DataTypes.JSONB,
                 allowNull: true,

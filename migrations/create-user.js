@@ -79,6 +79,10 @@ module.exports = {
                 type: Sequelize.DATE,
                 allowNull: true
             },
+            lastTokenRefresh: {
+                type: Sequelize.DATE,
+                allowNull: true
+            },
             shippingAddress: {
                 type: Sequelize.JSONB,
                 allowNull: true,
