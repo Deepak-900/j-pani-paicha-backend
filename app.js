@@ -1,4 +1,3 @@
-// app.js
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -7,8 +6,12 @@ const authRoutes = require('./routes/authRoutes');
 const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 
 const app = express();
+
+app.use('/userProfile', express.static(path.join(__dirname, 'public', 'images')));
+
 
 // 1. Security middleware first
 app.use(helmet());
@@ -42,6 +45,10 @@ app.use(cookieParser());
 
 // 6. Routes
 app.use('/api/auth', authRoutes);
+
+app.get('/test-image', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/images/default.png'));
+});
 
 // 7. Health Check
 app.get('/api/health', (req, res) => {
