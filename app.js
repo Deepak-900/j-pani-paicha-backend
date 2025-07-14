@@ -10,7 +10,7 @@ const path = require('path');
 
 const app = express();
 
-app.use('/userProfile', express.static(path.join(__dirname, 'public', 'images')));
+app.use('/userProfile', express.static(path.join(__dirname, 'public', 'uploads', 'profile')));
 
 
 // 1. Security middleware first
@@ -47,7 +47,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 
 app.get('/test-image', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/images/default.png'));
+    res.sendFile(path.join(__dirname, 'public/uploads/profile/default.png'));
 });
 
 // 7. Health Check

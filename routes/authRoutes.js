@@ -4,6 +4,9 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const protect = require('../middlewares/authMiddleware');
 const { registerValidator } = require('../middlewares/validators');
+const profileController = require('../controllers/userController');
+const { singleUpload, handleUploadErrors } = require('../middlewares/uploadMiddleware');
+
 
 // Cache-control and security headers middleware
 const securityHeaders = (req, res, next) => {
@@ -28,5 +31,17 @@ router.post('/refresh-token', securityHeaders, authController.refreshToken);
 // Protected routes
 router.get('/check-auth', protect, securityHeaders, authController.checkAuth);
 router.post('/logout', protect, securityHeaders, authController.logout);
+
+// Get current user profile
+router.get('/', protect, profileController.getProfile);
+
+// Update user data
+router.put('/data', protect, profileController.updateUserData);
+
+// Update password
+router.put('/password', protect, profileController.updatePassword);
+
+// Update profile image
+router.put('/image', protect, singleUpload, handleUploadErrors, profileController.updateProfileImage);
 
 module.exports = router;
