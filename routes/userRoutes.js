@@ -27,7 +27,7 @@ router.get('/', protect, securityHeaders, userController.getProfile);
 router.put('/data', protect, securityHeaders, userController.updateUserData);
 
 // Update password
-router.put('/password', protect, securityHeaders, userController.updatePassword);
+router.put('/updatePassword', protect, securityHeaders, userController.updatePassword);
 
 // Update profile image
 router.put('/updateUserProfile', protect, securityHeaders, singleUpload, handleUploadErrors, userController.updateProfileImage);

@@ -58,8 +58,8 @@ module.exports = {
                 firstName,
                 lastName,
                 email,
-                phoneNumber,
-                shippingAddress
+                phoneNumber
+
             }, {
                 where: { id: userId },
                 returning: true
