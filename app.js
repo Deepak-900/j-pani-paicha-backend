@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes')
 const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -45,6 +46,7 @@ app.use(cookieParser());
 
 // 6. Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 
 app.get('/test-image', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/uploads/profile/default.png'));
