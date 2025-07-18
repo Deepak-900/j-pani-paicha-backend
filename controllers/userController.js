@@ -130,6 +130,11 @@ module.exports = {
 
     updateProfileImage: async (req, res, next) => {
         try {
+
+            // Debugging: Log the entire request
+            console.log('Request received - Files:', req.file);
+            console.log('Request body:', req.body);
+
             const userId = req.user.id;
 
             if (!req.file) {
@@ -140,27 +145,51 @@ module.exports = {
                 });
             }
 
-            // Get user and current image (following your pattern)
+            // Validate file type if needed
+            if (!req.file.mimetype.startsWith('image/')) {
+                await unlinkAsync(req.file.path); // Delete the uploaded file
+                return res.status(400).json({
+                    success: false,
+                    message: 'Only image files are allowed'
+                });
+            }
+            // Get user and current  image (following your pattern)
             const user = await User.findByPk(userId);
+            if (!user) {
+                await unlinkAsync(req.file.path); // Clean up the uploaded file
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found'
+                });
+            }
             const oldImage = user.profilePicture;
 
             // Update with new image
             user.profilePicture = req.file.filename;
             await user.save();
 
-            // Delete old image if it exists (matches your resource handling)
+            // Delete old image if it exists and isn't the default
             if (oldImage && oldImage !== 'default.png') {
                 try {
                     const oldImagePath = path.join(
                         __dirname,
-                        '../../public/uploads/profile',
+                        '../public/uploads/profile',
                         oldImage
                     );
-                    await unlinkAsync(oldImagePath);
+
+                    // Check if file exists before trying to delete
+                    if (fs.existsSync(oldImagePath)) {
+                        await unlinkAsync(oldImagePath);
+                        console.log(`🗑️ Deleted old image: ${oldImage}`);
+                    } else {
+                        console.warn(`⚠️ Old image not found at: ${oldImagePath}`);
+                    }
                 } catch (err) {
                     console.error('⚠️ [WARNING] Error deleting old image:'.yellow, err);
+                    // This isn't critical - we can continue
                 }
             }
+
 
             // Construct image URL (following your existing URL pattern)
             const imageUrl = `${req.protocol}://${req.get('host')}/uploads/profile/${req.file.filename}`;
@@ -174,6 +203,16 @@ module.exports = {
             });
 
         } catch (error) {
+
+            // Clean up uploaded file if error occurred
+            if (req.file) {
+                try {
+                    await unlinkAsync(req.file.path);
+                } catch (cleanupErr) {
+                    console.error('⚠️ Error cleaning up uploaded file:'.yellow, cleanupErr);
+                }
+            }
+
             console.error('❌ [ERROR] Image update error:'.red.bold, error);
             next(error);
         }

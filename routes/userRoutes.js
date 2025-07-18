@@ -23,13 +23,26 @@ const securityHeaders = (req, res, next) => {
 // Get current user profile
 router.get('/', protect, securityHeaders, userController.getProfile);
 
+// Update profile image
+// Debug
+// router.patch('/updateUserAvatar', (req, res, next) => {
+//     console.log("Headers:", req.headers);
+//     console.log("Request received at:", new Date());
+//     next();
+// }, protect, securityHeaders, singleUpload, handleUploadErrors, userController.updateProfileImage);
+
+router.patch('/updateUserAvatar', (req, res, next) => {
+    console.log("Headers:", req.headers);
+    console.log("Request received at:", new Date());
+    next();
+}, protect, securityHeaders, singleUpload, handleUploadErrors, userController.updateProfileImage);
+
+
 // Update user data
-router.put('/data', protect, securityHeaders, userController.updateUserData);
+router.patch('/updateUserData', protect, securityHeaders, userController.updateUserData);
 
 // Update password
-router.put('/updatePassword', protect, securityHeaders, userController.updatePassword);
+router.patch('/updatePassword', protect, securityHeaders, userController.updatePassword);
 
-// Update profile image
-router.put('/updateUserProfile', protect, securityHeaders, singleUpload, handleUploadErrors, userController.updateProfileImage);
 
 module.exports = router;
