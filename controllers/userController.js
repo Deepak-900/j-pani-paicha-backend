@@ -132,8 +132,8 @@ module.exports = {
         try {
 
             // Debugging: Log the entire request
-            console.log('Request received - Files:', req.file);
-            console.log('Request body:', req.body);
+            // console.log('Request received - Files:', req.file);
+            // console.log('Request body:', req.body);
 
             const userId = req.user.id;
 
