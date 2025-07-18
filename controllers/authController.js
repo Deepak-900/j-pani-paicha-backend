@@ -21,6 +21,7 @@ const getSafeUserData = (user) => ({
     phoneNumber: user.phoneNumber,
     profilePicture: user.profilePicture,
     role: user.role,
+    rememberMe: user.rememberMe,
     createdAt: user.createdAt,
     lastLoginAt: user.lastLoginAt
 });
@@ -68,7 +69,7 @@ module.exports = {
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { email, password } = req.body;
+            const { email, password, rememberMe = false } = req.body;
             const user = await User.unscoped().findOne({ where: { email } });
 
             if (!user || !(await user.isValidPassword(password))) {
@@ -76,23 +77,31 @@ module.exports = {
                 return res.status(401).json({ message: 'Invalid credentials' });
             }
 
+            // Set token expiration based on rememberMe
+            const accessTokenExpiresIn = rememberMe ? '24h' : '15m'; // 24 hours vs 15 minutes
+            const refreshTokenExpiresIn = rememberMe ? '30d' : '7d'; // 30 days vs 7 days
+            const tokenExpiresAt = rememberMe
+                ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+                : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
             // Generate tokens
             const accessToken = jwt.sign(
                 { userId: user.id, role: user.role },
                 process.env.JWT_SECRET,
-                { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+                { expiresIn: accessTokenExpiresIn }
             );
 
             const refreshToken = jwt.sign(
                 { userId: user.id },
                 process.env.JWT_REFRESH_SECRET,
-                { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
+                { expiresIn: refreshTokenExpiresIn }
             );
 
             // Update user
             await user.update({
                 refreshToken,
-                tokenExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                rememberMe,
+                tokenExpiresAt,
                 lastLoginAt: new Date(),
                 lastTokenRefresh: new Date()
             });
@@ -100,15 +109,19 @@ module.exports = {
             // Set cookies
             res.cookie('accessToken', accessToken, {
                 ...cookieOptions,
-                maxAge: 15 * 60 * 1000 // 15 minutes
+                maxAge: rememberMe ? 24 * 60 * 60 * 1000 : 15 * 60 * 1000 // 24h or 15m
             });
 
-            res.cookie('refreshToken', refreshToken, cookieOptions);
+            res.cookie('refreshToken', refreshToken, {
+                ...cookieOptions,
+                maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000 // 30d or 7d
+            });
 
             return res.status(200).json({
                 success: true,
                 message: 'Login successful',
                 user: getSafeUserData(user)
+
             });
         } catch (error) {
             console.error('Login error:', error);
@@ -140,32 +153,44 @@ module.exports = {
                 return res.status(401).json({ message: 'Invalid refresh token' });
             }
 
+            // Maintain the same rememberMe setting from original login
+            const rememberMe = user.rememberMe;
+            const accessTokenExpiresIn = rememberMe ? '24h' : '15m';
+            const refreshTokenExpiresIn = rememberMe ? '30d' : '7d';
+            const tokenExpiresAt = rememberMe
+                ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+
             // Generate new tokens
             const newAccessToken = jwt.sign(
                 { userId: user.id, role: user.role },
                 process.env.JWT_SECRET,
-                { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+                { expiresIn: accessTokenExpiresIn }
             );
 
             const newRefreshToken = jwt.sign(
                 { userId: user.id },
                 process.env.JWT_REFRESH_SECRET,
-                { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
+                { expiresIn: refreshTokenExpiresIn }
             );
 
             // Update user
             await user.update({
                 refreshToken: newRefreshToken,
-                tokenExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                tokenExpiresAt,
                 lastTokenRefresh: new Date()
             });
 
             // Set cookies
             res.cookie('accessToken', newAccessToken, {
                 ...cookieOptions,
-                maxAge: 15 * 60 * 1000
+                maxAge: rememberMe ? 24 * 60 * 60 * 1000 : 15 * 60 * 1000
             });
-            res.cookie('refreshToken', newRefreshToken, cookieOptions);
+            res.cookie('refreshToken', newRefreshToken, {
+                ...cookieOptions,
+                maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000
+            });
 
             return res.status(200).json({
                 success: true,
@@ -243,7 +268,8 @@ module.exports = {
 
                 return res.status(200).json({
                     isAuthenticated: true,
-                    user: getSafeUserData(user)
+                    user: getSafeUserData(user),
+                    rememberMe: user.rememberMe // Include rememberMe status in response
                 });
             } catch (error) {
                 if (error.name === 'TokenExpiredError') {

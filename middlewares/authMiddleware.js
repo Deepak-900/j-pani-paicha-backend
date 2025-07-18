@@ -22,7 +22,11 @@ const protect = async (req, res, next) => {
             where: {
                 id: decoded.userId,
                 refreshToken: { [Op.not]: null }, // Has active refresh token
-                tokenExpiresAt: { [Op.gt]: new Date() } // Token not expired
+                // If rememberMe is false, check token expiration
+                [Op.or]: [
+                    { rememberMe: true },
+                    { tokenExpiresAt: { [Op.gt]: new Date() } }
+                ]
             }
         });
 

@@ -57,6 +57,7 @@ module.exports = {
                 password: passwordHash,
                 profilePicture: `default.png`,
                 role: 'customer',
+                rememberMe: 'false',
                 refreshToken: 'sample-token-' + Math.random().toString(36).substring(2, 15),
                 tokenExpiresAt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days
                 lastLoginAt: now,
@@ -93,6 +94,7 @@ module.exports = {
             password: await bcrypt.hash('AdminPassword123!', 12),
             profilePicture: `default.png`,
             role: 'admin',
+            rememberMe: 'false',
             refreshToken: 'sample-token-' + Math.random().toString(36).substring(2, 15),
             tokenExpiresAt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days
             lastLoginAt: now,

@@ -70,7 +70,13 @@ module.exports = (sequelize) => {
             role: {
                 type: DataTypes.ENUM('customer', 'admin'),
                 defaultValue: 'customer',
-            }, refreshToken: {
+            },
+            rememberMe: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+                allowNull: false
+            },
+            refreshToken: {
                 type: DataTypes.STRING(512),
                 allowNull: true
             },

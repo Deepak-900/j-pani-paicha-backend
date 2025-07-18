@@ -59,6 +59,11 @@ module.exports = {
                 defaultValue: 'customer',
                 allowNull: false
             },
+            rememberMe: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
+                allowNull: false
+            },
             refreshToken: {
                 type: Sequelize.STRING(512),
                 allowNull: true
