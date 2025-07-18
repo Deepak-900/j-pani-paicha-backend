@@ -102,6 +102,14 @@ module.exports = {
                 });
             }
 
+            // Additional new password validation
+            if (newPassword.length < 8) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Password must be at least 8 characters'
+                });
+            }
+
             // Verify current password (using your existing method)
             const user = await User.unscoped().findByPk(userId);
             if (!user || !(await user.isValidPassword(currentPassword))) {
