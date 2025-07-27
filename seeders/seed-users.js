@@ -6,20 +6,43 @@ const now = new Date();
 
 const createNepaliAddress = () => {
     const provinces = ['Koshi', 'Madhesh', 'Bagmati', 'Gandaki', 'Lumbini', 'Karnali', 'Sudurpashchim'];
+
     const districts = {
-        Bagmati: ['Kathmandu', 'Lalitpur', 'Bhaktapur'],
-        Koshi: ['Morang', 'Sunsari'],
-        Gandaki: ['Kaski', 'Lamjung'],
-        Lumbini: ['Rupandehi', 'Dang'],
-        Madhesh: ['Sarlahi', 'Parsa'],
-        Karnali: ['Surkhet'],
-        Sudurpashchim: ['Kailali', 'Kanchanpur'],
+        Koshi: ['Bhojpur', 'Dhankuta', 'Ilam', 'Jhapa', 'Khotang', 'Morang', 'Okhaldhunga', 'Panchthar', 'Sankhuwasabha', 'Solukhumbu', 'Sunsari', 'Taplejung', 'Terhathum', 'Udayapur'],
+        Madhesh: ['Parsa', 'Bara', 'Rautahat', 'Sarlahi', 'Dhanusha', 'Siraha', 'Mahottari', 'Saptari'],
+        Bagmati: ['Kathmandu', 'Lalitpur', 'Bhaktapur', 'Dhading', 'Kavrepalanchok', 'Nuwakot', 'Rasuwa', 'Sindhupalchok', 'Chitwan', 'Makwanpur', 'Sindhuli', 'Ramechhap', 'Dolakha'],
+        Gandaki: ['Kaski', 'Lamjung', 'Baglung', 'Gorkha', 'Manang', 'Mustang', 'Myagdi', 'Nawalpur', 'Parbat', 'Syangja', 'Tanahun'],
+        Lumbini: ['Rupandehi', 'Dang', 'Kapilvastu', 'Arghakhanchi', 'Gulmi', 'Palpa', 'Pyuthan', 'Rolpa', 'Eastern Rukum', 'Banke', 'Bardiya'],
+        Karnali: ['Surkhet', 'Western Rukum', 'Salyan', 'Dolpa', 'Humla', 'Jumla', 'Kalikot', 'Mugu', 'Dailekh', 'Jajarkot'],
+        Sudurpashchim: ['Kailali', 'Kanchanpur', 'Achham', 'Doti', 'Bajhang', 'Bajura', 'Dadeldhura', 'Baitadi', 'Darchula']
     };
+
     const municipalities = {
-        Kathmandu: ['Kathmandu Metropolitan', 'Tokha Municipality'],
-        Lalitpur: ['Lalitpur Metropolitan'],
-        Bhaktapur: ['Bhaktapur Municipality'],
+        // Metropolitan Cities (6 total) :cite[4]:cite[6]
+        Kathmandu: ['Kathmandu Metropolitan', 'Budhanilkantha Municipality', 'Tarakeshwar Municipality', 'Gokarneshwar Municipality', 'Chandragiri Municipality', 'Tokha Municipality', 'Kageshwari-Manohara Municipality', 'Nagarjun Municipality'],
+        Lalitpur: ['Lalitpur Metropolitan', 'Mahalaxmi Municipality', 'Godawari Municipality'],
+        Bhaktapur: ['Bhaktapur Municipality', 'Suryabinayak', 'Madhyapur Thimi'],
+        Morang: ['Biratnagar Metropolitan', 'Sundar Haraincha'],
         Kaski: ['Pokhara Metropolitan'],
+        Parsa: ['Birgunj Metropolitan'],
+
+        // Sub-Metropolitan Cities (11 total) :cite[4]:cite[6]
+        Sunsari: ['Itahari', 'Dharan'],
+        Dhanusha: ['Janakpurdham'],
+        Rupandehi: ['Butwal', 'Tilottama'],
+        Dang: ['Ghorahi', 'Tulsipur'],
+        Makwanpur: ['Hetauda'],
+        Kailali: ['Dhangadhi'],
+        Banke: ['Nepalgunj'],
+        Bara: ['Kalaiya', 'Jitpursimara'],
+
+        // Urban Municipalities (examples) :cite[3]:cite[4]
+        Jhapa: ['Birtamod', 'Mechinagar', 'Damak'],
+        Udayapur: ['Triyuga'],
+        Siraha: ['Lahan'],
+        Kanchanpur: ['Bhimdatta'],
+        Chitwan: ['Bharatpur'],
+        Surkhet: ['Birendranagar']
     };
 
     const province = faker.helpers.arrayElement(provinces);
