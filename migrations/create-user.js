@@ -3,7 +3,7 @@
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.createTable('Users', {
+        await queryInterface.createTable('users', {
             id: {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
@@ -88,16 +88,6 @@ module.exports = {
                 type: Sequelize.DATE,
                 allowNull: true
             },
-            shippingAddress: {
-                type: Sequelize.JSONB,
-                allowNull: true,
-                defaultValue: null
-            },
-            billingAddress: {
-                type: Sequelize.JSONB,
-                allowNull: true,
-                defaultValue: null
-            },
             createdAt: {
                 type: Sequelize.DATE,
                 allowNull: false
@@ -108,11 +98,28 @@ module.exports = {
             }
         });
 
-        // Add compound index for firstName and lastName if needed
-        await queryInterface.addIndex('Users', ['firstName', 'lastName']);
+        // Add compound index for firstName and lastName
+        await queryInterface.addIndex('users', ['firstName', 'lastName'], {
+            name: 'users_full_name_index'
+        });
+
+        await queryInterface.addIndex('users', ['email'], {
+            unique: true,
+            name: 'users_email_unique'
+        })
+
+        await queryInterface.addIndex('users', ['phoneNumber'], {
+            unique: true,
+            name: 'users_phone_unique'
+        });
+
+        await queryInterface.addIndex('users', ['lastLoginAt'], {
+            name: 'users_last_login_index'
+        });
+
     },
 
     down: async (queryInterface) => {
-        await queryInterface.dropTable('Users');
+        await queryInterface.dropTable('users');
     }
 };

@@ -54,6 +54,7 @@ module.exports = (sequelize) => {
                 allowNull: false,
                 validate: {
                     notEmpty: { msg: 'Phone number is required' },
+                    // len: [10, 10],
                 },
             },
             profilePicture: {
@@ -92,7 +93,7 @@ module.exports = (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
-            resetTokenExpires: {
+            resetTokenExpiresAt: {
                 type: DataTypes.DATE,
                 allowNull: true
             },
@@ -100,38 +101,7 @@ module.exports = (sequelize) => {
                 type: DataTypes.DATE,
                 allowNull: true
             },
-            shippingAddress: {
-                type: DataTypes.JSONB,
-                allowNull: true,
-                defaultValue: null,  // Explicit default value
-                validate: {
-                    isValidAddress(value) {
-                        if (value && typeof value === 'object') {
-                            const fields = ['street', 'city', 'province', 'district', 'municipality', 'ward', 'zipCode', 'country'];
-                            const missing = fields.filter(field => !value[field]);
-                            if (missing.length) {
-                                throw new Error(`Missing shipping address fields: ${missing.join(', ')}`);
-                            }
-                        }
-                    }
-                }
-            },
-            billingAddress: {
-                type: DataTypes.JSONB,
-                allowNull: true,
-                defaultValue: null,  // Explicit default value
-                validate: {
-                    isValidAddress(value) {
-                        if (value && typeof value === 'object') {
-                            const fields = ['street', 'city', 'province', 'district', 'municipality', 'ward', 'zipCode', 'country'];
-                            const missing = fields.filter(field => !value[field]);
-                            if (missing.length) {
-                                throw new Error(`Missing billing address fields: ${missing.join(', ')}`);
-                            }
-                        }
-                    }
-                }
-            },
+
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE,
         },
@@ -150,6 +120,9 @@ module.exports = (sequelize) => {
             defaultScope: {
                 attributes: { exclude: ['password', 'refreshToken', 'resetToken'] },
             },
+            timestamps: true,
+            createdAt: 'createdAt',
+            updatedAt: 'updatedAt',
         }
     );
 
